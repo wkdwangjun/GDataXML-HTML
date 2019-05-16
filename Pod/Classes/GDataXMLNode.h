@@ -133,6 +133,7 @@ typedef NS_ENUM(NSInteger, GDataXMLNodeKind) {
 // if you change the underlying tree at all
 - (void*)XMLNode;
 - (void)releaseCachedValues;
+- (void)replaceWithNode:(GDataXMLNode *)newNode;
 
 @end
 

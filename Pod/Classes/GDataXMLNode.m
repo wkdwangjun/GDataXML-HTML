@@ -910,6 +910,44 @@ static void RegisterNamespaces(NSDictionary *namespaces, xmlXPathContextPtr xpat
     return [super methodSignatureForSelector:selector];
 }
 
+- (void)replaceWithNode:(GDataXMLNode *)newNode
+{
+    // this is safe for attributes too
+    if (xmlNode_ != NULL && xmlNode_->parent != NULL) {
+        
+        [self releaseCachedValues];
+        
+        xmlNodePtr oldNode = xmlNode_;
+        
+        xmlNodePtr childNodeCopy = [newNode XMLNodeCopy];
+        if (childNodeCopy) {
+            
+            xmlNodePtr resultNode = xmlReplaceNode(oldNode, childNodeCopy);
+            if (resultNode == NULL) {
+                
+                // failed to replace
+                xmlFreeNode(childNodeCopy);
+                
+            } else {
+                xmlNode_ = childNodeCopy;
+                // replace successfully; see if it has
+                // previously-unresolved namespace prefixes that can now be fixed up
+                [[self class] fixUpNamespacesForNode:childNodeCopy
+                                  graftingToTreeNode:xmlNode_->parent];
+            }
+        }
+        
+        xmlUnlinkNode(oldNode);
+        
+        // if the child node was borrowing its xmlNodePtr, then we need to
+        // explicitly free it, since there is probably no owning object that will
+        // free it on dealloc
+        if (![self shouldFreeXMLNode]) {
+            xmlFreeNode(oldNode);
+        }
+    }
+}
+
 #pragma mark -
 
 - (xmlNodePtr)XMLNodeCopy {
