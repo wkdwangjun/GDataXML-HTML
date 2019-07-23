@@ -100,6 +100,7 @@ typedef NS_ENUM(NSInteger, GDataXMLNodeKind) {
 - (NSUInteger)childCount;
 - (NSArray<GDataXMLNode*>*)children;
 - (GDataXMLNode *)childAtIndex:(unsigned)index;
+- (GDataXMLNode *)parent;
 
 - (NSString *)localName;
 - (NSString *)name;

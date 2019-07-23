@@ -725,6 +725,21 @@ static void RegisterNamespaces(NSDictionary *namespaces, xmlXPathContextPtr xpat
     return nil;
 }
 
+- (GDataXMLNode *)parent {
+    if (xmlNode_ == NULL) {
+        return nil;
+    }
+    
+    GDataXMLNode *parentNode = nil;
+    
+    xmlNodePtr parent = xmlNode_->parent;
+    if (parent) {
+        parentNode = [GDataXMLNode nodeBorrowingXMLNode:parent];
+    }
+    
+    return parentNode;
+}
+
 - (GDataXMLNodeKind)kind {
     if (xmlNode_ != NULL) {
         xmlElementType nodeType = xmlNode_->type;
