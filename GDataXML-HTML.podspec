@@ -17,6 +17,6 @@ Pod::Spec.new do |s|
   s.library			= "xml2"
   s.requires_arc		= true
   s.xcconfig			= { "HEADER_SEARCH_PATHS" => "$(inherited) $(SDKROOT)/usr/include/libxml2" }
-
+  s.ios.deployment_target = '8.0'
 
 end
