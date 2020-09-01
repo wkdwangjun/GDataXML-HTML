@@ -185,6 +185,8 @@ typedef NS_ENUM(NSInteger, GDataXMLNodeKind) {
 
 - (NSData *)XMLData;
 
+- (NSString *)HTMLString;
+
 - (void)setVersion:(NSString *)version;
 - (void)setCharacterEncoding:(NSString *)encoding;
 

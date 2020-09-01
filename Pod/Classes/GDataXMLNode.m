@@ -31,6 +31,7 @@
 #import <libxml/parser.h>
 #import <libxml/xmlstring.h>
 #import <libxml/HTMLparser.h>
+#import <libxml/HTMLtree.h>
 #import <libxml/xpath.h>
 #import <libxml/xpathInternals.h>
 
@@ -1935,6 +1936,40 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding)
                                           length:bufferSize];
             xmlFree(buffer);
             return data;
+        }
+    }
+    return nil;
+}
+
+- (NSString *)HTMLString {
+    if (xmlDoc_ != NULL) {
+        // copy the root node from the doc
+        xmlNodePtr root = xmlDocGetRootElement(xmlDoc_);
+        if (root) {
+            xmlNodePtr xmlNode = xmlCopyNode(root, 1); // 1: recursive
+
+            NSString *str = nil;
+            
+            if (xmlNode != NULL) {
+                
+                xmlBufferPtr buff = xmlBufferCreate();
+                if (buff) {
+                    
+                    int result = htmlNodeDump(buff, xmlDoc_, xmlNode);
+                    
+                    if (result > -1) {
+                        str = [[NSString alloc] initWithBytes:(xmlBufferContent(buff))
+                                                       length:(xmlBufferLength(buff))
+                                                     encoding:NSUTF8StringEncoding];
+                    }
+                    xmlBufferFree(buff);
+                }
+            }
+            
+            // remove leading and trailing whitespace
+            NSCharacterSet *ws = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+            NSString *trimmed = [str stringByTrimmingCharactersInSet:ws];
+            return trimmed;
         }
     }
     return nil;

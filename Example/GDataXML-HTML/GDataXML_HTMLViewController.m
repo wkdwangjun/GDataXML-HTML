@@ -65,6 +65,14 @@
     NSString *path = [[NSBundle mainBundle]pathForResource:@"html" ofType:@"html"];
     GDataXMLDocument *doc = [[GDataXMLDocument alloc]initWithHTMLData:[NSData dataWithContentsOfFile:path] error:NULL];
     if (doc) {
+        GDataXMLNode *oldNode = [doc firstNodeForXPath:@"/html/body/p/a/b" error:nil];
+        if (oldNode) {
+            GDataXMLElement *newElement = [GDataXMLElement elementWithName:@"i" stringValue:@"italic text"];
+            [oldNode replaceWithNode:newElement];
+            
+            [self print:@"\nparent node:\n"];
+            [self print:[[oldNode parent] XMLString]];
+        }
         [self print:@"\nLoad non valid HTML file and convert it to valid XML:\n\n"];
         [self print:[[doc rootElement] XMLString]];
     }
